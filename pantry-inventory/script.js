@@ -118,7 +118,7 @@ addItemBtn.addEventListener('click', async () => {
   const docSnap = await getDoc(itemRef);
 
   const oldValue = docSnap.exists()
-    ? `${docSnap.data().quantity} ${docSnap.data().unit}`
+    ? `${docSnap.data().quantity}`
     : 'N/A';
 
   await setDoc(itemRef, {
