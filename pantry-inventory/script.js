@@ -1,67 +1,150 @@
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-document.getElementById('loginBtn').addEventListener('click', async () => {
-  const email = document.getElementById('email').value;
-  const pass = document.getElementById('password').value;
-  await auth.signInWithEmailAndPassword(email, pass);
+const emailInput = document.getElementById('email');
+const passInput = document.getElementById('password');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+
+const loginSection = document.getElementById('login-section');
+const inventorySection = document.getElementById('inventory-section');
+const inventoryTable = document.getElementById('inventory-table');
+
+const itemNameInput = document.getElementById('item-name');
+const itemQtyInput = document.getElementById('item-qty');
+const itemUnitInput = document.getElementById('item-unit');
+const addItemBtn = document.getElementById('addItemBtn');
+
+const loadingIndicator = document.createElement('div');
+loadingIndicator.id = 'loading-indicator';
+loadingIndicator.textContent = 'Loading...';
+loadingIndicator.style.display = 'none';
+document.body.insertBefore(loadingIndicator, inventorySection);
+
+const messageBox = document.createElement('div');
+messageBox.id = 'message-box';
+document.body.insertBefore(messageBox, inventorySection);
+
+// Show/hide loading spinner
+function setLoading(isLoading) {
+  loadingIndicator.style.display = isLoading ? 'block' : 'none';
+}
+
+// Show messages to user
+function showMessage(msg, isError = false) {
+  messageBox.textContent = msg;
+  messageBox.style.color = isError ? 'red' : 'green';
+  setTimeout(() => (messageBox.textContent = ''), 4000);
+}
+
+// Input validation
+function validateInputs(name, qty, unit) {
+  if (!name || name.trim() === '') {
+    showMessage('Item name is required', true);
+    return false;
+  }
+  if (!qty || isNaN(qty) || qty <= 0) {
+    showMessage('Quantity must be a positive number', true);
+    return false;
+  }
+  if (!unit || unit.trim() === '') {
+    showMessage('Unit is required', true);
+    return false;
+  }
+  return true;
+}
+
+// Login
+loginBtn.addEventListener('click', async () => {
+  try {
+    setLoading(true);
+    await auth.signInWithEmailAndPassword(emailInput.value, passInput.value);
+  } catch (err) {
+    showMessage('Login failed: ' + err.message, true);
+  } finally {
+    setLoading(false);
+  }
 });
 
-document.getElementById('logoutBtn').addEventListener('click', () => {
+// Logout
+logoutBtn.addEventListener('click', () => {
   auth.signOut();
 });
 
-auth.onAuthStateChanged(user => {
-  if (user) {
-    document.getElementById('login-section').style.display = 'none';
-    document.getElementById('inventory-section').style.display = 'block';
+// Load inventory and display
+async function loadInventory() {
+  try {
+    setLoading(true);
+    inventoryTable.innerHTML = '<tr><th>Item</th><th>Quantity</th><th>Unit</th></tr>';
+    const snapshot = await db.collection('inventory').get();
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      inventoryTable.innerHTML += `<tr>
+        <td>${data.name}</td>
+        <td>${data.quantity}</td>
+        <td>${data.unit}</td>
+      </tr>`;
+    });
+  } catch (err) {
+    showMessage('Failed to load inventory: ' + err.message, true);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// Add or update item
+addItemBtn.addEventListener('click', async () => {
+  const name = itemNameInput.value.trim();
+  const qty = parseInt(itemQtyInput.value, 10);
+  const unit = itemUnitInput.value.trim();
+  const user = auth.currentUser ? auth.currentUser.email : 'unknown';
+
+  if (!validateInputs(name, qty, unit)) return;
+
+  try {
+    setLoading(true);
+    const itemRef = db.collection('inventory').doc(name);
+    const docSnap = await itemRef.get();
+
+    const oldValue = docSnap.exists ? `${docSnap.data().quantity} ${docSnap.data().unit}` : 'N/A';
+
+    await itemRef.set({
+      name,
+      quantity: qty,
+      unit,
+      lastUpdatedBy: user,
+      lastUpdatedAt: new Date().toISOString(),
+    });
+
+    await db.collection('logs').add({
+      item: name,
+      oldValue,
+      newValue: `${qty} ${unit}`,
+      changedBy: user,
+      timestamp: new Date().toISOString(),
+    });
+
+    showMessage('Item added/updated successfully!');
+    itemNameInput.value = '';
+    itemQtyInput.value = '';
+    itemUnitInput.value = '';
+
     loadInventory();
-  } else {
-    document.getElementById('login-section').style.display = 'block';
-    document.getElementById('inventory-section').style.display = 'none';
+  } catch (err) {
+    showMessage('Failed to add/update item: ' + err.message, true);
+  } finally {
+    setLoading(false);
   }
 });
 
-async function loadInventory() {
-  const table = document.getElementById('inventory-table');
-  table.innerHTML = "<tr><th>Item</th><th>Qty</th><th>Unit</th></tr>";
-  const snapshot = await db.collection('inventory').get();
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    table.innerHTML += `<tr>
-      <td>${data.name}</td>
-      <td>${data.quantity}</td>
-      <td>${data.unit}</td>
-    </tr>`;
-  });
-}
-
-document.getElementById('addItemBtn').addEventListener('click', async () => {
-  const name = document.getElementById('item-name').value;
-  const qty = parseInt(document.getElementById('item-qty').value);
-  const unit = document.getElementById('item-unit').value;
-  const user = auth.currentUser.email;
-
-  const itemRef = db.collection('inventory').doc(name);
-  const docSnap = await itemRef.get();
-  let oldValue = "N/A";
-  if (docSnap.exists) {
-    oldValue = `${docSnap.data().quantity} ${docSnap.data().unit}`;
+// Auth state changes
+auth.onAuthStateChanged(user => {
+  if (user) {
+    loginSection.style.display = 'none';
+    inventorySection.style.display = 'block';
+    loadInventory();
+  } else {
+    loginSection.style.display = 'block';
+    inventorySection.style.display = 'none';
   }
-
-  await itemRef.set({
-    name, quantity: qty, unit,
-    lastUpdatedBy: user,
-    lastUpdatedAt: new Date().toISOString()
-  });
-
-  await db.collection('logs').add({
-    item: name,
-    oldValue,
-    newValue: `${qty} ${unit}`,
-    changedBy: user,
-    timestamp: new Date().toISOString()
-  });
-
-  loadInventory();
 });
