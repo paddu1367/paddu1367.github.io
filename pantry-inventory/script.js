@@ -1,5 +1,19 @@
-const auth = firebase.auth();
-const db = firebase.firestore();
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "${API_KEY}",
+    authDomain: "${AUTH_DOMAIN}",
+    projectId: "${PROJECT_ID}",
+    storageBucket: "${STORAGE_BUCKET}",
+    messagingSenderId: "${MESSAGING_SENDER_ID}",
+    appId: "${APP_ID}"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
 
 const emailInput = document.getElementById('email');
 const passInput = document.getElementById('password');
