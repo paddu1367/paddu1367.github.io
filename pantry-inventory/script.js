@@ -58,7 +58,7 @@ document.getElementById('addItemBtn').addEventListener('click', async () => {
   await db.collection('logs').add({
     item: name,
     oldValue,
-    newValue: `${qty} ${unit}",
+    newValue: `${qty} ${unit}`,
     changedBy: user,
     timestamp: new Date().toISOString()
   });
