@@ -3,12 +3,12 @@
   import { getFirestore } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
   const firebaseConfig = {
-    apiKey: process.env.API_KEY,
-    authDomain: process.env.AUTH_DOMAIN,
-    projectId: process.env.PROJECT_ID,
-    storageBucket: process.env.STORAGE_BUCKET,
-    messagingSenderId: process.env.MESSAGING_SENDER_ID,
-    appId: process.env.APP_ID
+    apiKey: "AIzaSyDNCR5ja6EY0GxzjyRHyO1xT4nLF5E0ZcY",
+    authDomain: "pantry-inventory-86d8a.firebaseapp.com",
+    projectId: "pantry-inventory-86d8a",
+    storageBucket: "pantry-inventory-86d8a.firebasestorage.app",
+    messagingSenderId:"565134687361",
+    appId: "1:565134687361:web:87c54a7b7aabfba2d42180"
   };
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
