@@ -1,6 +1,6 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
   import { signInWithEmailAndPassword, getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc ,getDocs,getDoc,doc,setDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDNCR5ja6EY0GxzjyRHyO1xT4nLF5E0ZcY",
@@ -88,9 +88,9 @@ logoutBtn.addEventListener('click', () => {
 // Load inventory and display
 async function loadInventory() {
   try {
-    setLoading(true);
+    
     inventoryTable.innerHTML = '<tr><th>Item</th><th>Quantity</th><th>Unit</th></tr>';
-    const snapshot = await db.collection('inventory').get();
+    const snapshot = await getDocs(collection(db, "inventory"));
     snapshot.forEach(doc => {
       const data = doc.data();
       inventoryTable.innerHTML += `<tr>
@@ -101,9 +101,7 @@ async function loadInventory() {
     });
   } catch (err) {
     showMessage('Failed to load inventory: ' + err.message, true);
-  } finally {
-    setLoading(false);
-  }
+  } 
 }
 
 // Add or update item
@@ -116,27 +114,29 @@ addItemBtn.addEventListener('click', async () => {
   if (!validateInputs(name, qty, unit)) return;
 
   try {
-    setLoading(true);
-    const itemRef = db.collection('inventory').doc(name);
-    const docSnap = await itemRef.get();
+  const itemRef = doc(collection(db, 'inventory'), name);
+  const docSnap = await getDoc(itemRef);
 
-    const oldValue = docSnap.exists ? `${docSnap.data().quantity} ${docSnap.data().unit}` : 'N/A';
+  const oldValue = docSnap.exists()
+    ? `${docSnap.data().quantity} ${docSnap.data().unit}`
+    : 'N/A';
 
-    await itemRef.set({
-      name,
-      quantity: qty,
-      unit,
-      lastUpdatedBy: user,
-      lastUpdatedAt: new Date().toISOString(),
-    });
+  await setDoc(itemRef, {
+    name,
+    quantity: qty,
+    unit,
+    lastUpdatedBy: user,
+    lastUpdatedAt: new Date().toISOString(),
+  });
 
-    await db.collection('logs').add({
-      item: name,
-      oldValue,
-      newValue: `${qty} ${unit}`,
-      changedBy: user,
-      timestamp: new Date().toISOString(),
-    });
+  await addDoc(collection(db, 'logs'), {
+    item: name,
+    oldValue,
+    newValue: `${qty} ${unit}`,
+    changedBy: user,
+    timestamp: new Date().toISOString(),
+  });
+
 
     showMessage('Item added/updated successfully!');
     itemNameInput.value = '';
@@ -146,9 +146,7 @@ addItemBtn.addEventListener('click', async () => {
     loadInventory();
   } catch (err) {
     showMessage('Failed to add/update item: ' + err.message, true);
-  } finally {
-    setLoading(false);
-  }
+  } 
 });
 
 // Auth state changes

@@ -1,26 +1,195 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background: #f8f9fa;
+/* Reset & base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-table {
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+/* Header */
+header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2rem;
+  color: #2c3e50;
+}
+
+/* Login Section */
+#login-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+#login-section input {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+#login-section input:focus {
+  outline: none;
+  border-color: #0077cc;
+}
+
+#loginBtn {
+  background-color: #0077cc;
+  color: white;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#loginBtn:hover {
+  background-color: #005fa3;
+}
+
+/* Loading indicator and messages */
+#loading-indicator,
+#message-box {
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+#message-box {
+  color: #007700;
+}
+
+/* Inventory Section */
+#inventory-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Logout button */
+#logoutBtn {
+  align-self: flex-end;
+  background-color: #cc0000;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+#logoutBtn:hover {
+  background-color: #990000;
+}
+
+/* Table */
+#inventory-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
 }
 
-th, td {
-  padding: 8px;
-  border: 1px solid #ccc;
+#inventory-table th,
+#inventory-table td {
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
   text-align: left;
 }
 
-input, button {
-  margin: 5px;
-  padding: 8px;
+#inventory-table th {
+  background-color: #f0f4f8;
+  font-weight: 700;
 }
 
-button {
+/* Inputs and add button */
+#inventory-section input {
+  padding: 0.7rem;
+  font-size: 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+  max-width: 250px;
+}
+
+#inventory-section input:focus {
+  outline: none;
+  border-color: #0077cc;
+}
+
+#addItemBtn {
+  background-color: #0077cc;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  max-width: 200px;
+}
+
+#addItemBtn:hover {
+  background-color: #005fa3;
+}
+
+/* Layout Inputs and Button horizontally on wider screens */
+@media (min-width: 600px) {
+  #inventory-section input,
+  #addItemBtn {
+    margin-right: 1rem;
+  }
+
+  #inventory-section input:last-of-type {
+    margin-right: 0;
+  }
+
+  #addItemBtn {
+    align-self: center;
+  }
+
+  #inventory-section {
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Responsive Table - horizontal scroll on small */
+@media (max-width: 600px) {
+  #inventory-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 }

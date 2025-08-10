@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pantry Inventory</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Pantry Inventory</h1>
+  <header>
+    <h1>📦 Inventory Tracker</h1>
+  </header>
+  
   <div id="login-section">
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
@@ -17,6 +22,7 @@
   
   <div id="inventory-section" style="display:none;">
     <button id="logoutBtn">Logout</button>
+    
     <h2>Inventory</h2>
     <table id="inventory-table"></table>
     <h3>Add / Update Item</h3>
