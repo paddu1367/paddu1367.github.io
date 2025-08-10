@@ -1,5 +1,5 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
   import { getFirestore } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -69,15 +69,14 @@ function validateInputs(name, qty, unit) {
 }
 
 // Login
-loginBtn.addEventListener('click', async () => {
+loginBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
   try {
-    setLoading(true);
-    await auth.signInWithEmailAndPassword(emailInput.value, passInput.value);
+    await signInWithEmailAndPassword(auth, emailInput.value, passInput.value);
+    alert("Login successful!");
   } catch (err) {
     showMessage('Login failed: ' + err.message, true);
-  } finally {
-    setLoading(false);
-  }
+  } 
 });
 
 // Logout
