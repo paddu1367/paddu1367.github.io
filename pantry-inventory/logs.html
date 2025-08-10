@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Change Logs</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Change Logs</h1>
+  <table id="log-table"></table>
+
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js"></script>
+  <script src="firebase-config.js"></script>
+  <script>
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        alert("Login first!");
+        location.href = "index.html";
+      } else {
+        const table = document.getElementById('log-table');
+        table.innerHTML = "<tr><th>Item</th><th>Old</th><th>New</th><th>User</th><th>Time</th></tr>";
+        const logs = await db.collection('logs').orderBy('timestamp', 'desc').get();
+        logs.forEach(doc => {
+          const l = doc.data();
+          table.innerHTML += `<tr>
+            <td>${l.item}</td>
+            <td>${l.oldValue}</td>
+            <td>${l.newValue}</td>
+            <td>${l.changedBy}</td>
+            <td>${l.timestamp}</td>
+          </tr>`;
+        });
+      }
+    });
+  </script>
+</body>
+</html>

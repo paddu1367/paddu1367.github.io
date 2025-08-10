@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pantry Inventory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Pantry Inventory</h1>
+  <div id="login-section">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button id="loginBtn">Login</button>
+  </div>
+
+  <div id="inventory-section" style="display:none;">
+    <button id="logoutBtn">Logout</button>
+    <h2>Inventory</h2>
+    <table id="inventory-table"></table>
+    <h3>Add / Update Item</h3>
+    <input type="text" id="item-name" placeholder="Item Name">
+    <input type="number" id="item-qty" placeholder="Quantity">
+    <input type="text" id="item-unit" placeholder="Unit">
+    <button id="addItemBtn">Add/Update Item</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
