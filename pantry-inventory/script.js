@@ -1,5 +1,5 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+  import { signInWithEmailAndPassword, getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
   import { getFirestore } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -76,6 +76,7 @@ loginBtn.addEventListener('click', async (e) => {
     alert("Login successful!");
   } catch (err) {
     showMessage('Login failed: ' + err.message, true);
+    alert(`Login failed: ${error.message}`);
   } 
 });
 
